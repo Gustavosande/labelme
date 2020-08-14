@@ -97,6 +97,7 @@ class Shape(object):
             self.close()
         else:
             self.points.append(point)
+            # print("add point %d" % len(self.points))
 
     def canAddPoint(self):
         return self.shape_type in ["polygon", "linestrip"]
@@ -110,7 +111,11 @@ class Shape(object):
         self.points.insert(i, point)
 
     def removePoint(self, i):
-        self.points.pop(i)
+        if(len(self.points) > i):
+            self.points.pop(i)
+
+    def haveNoPoints(self):
+        return len(self.points) == 0
 
     def isClosed(self):
         return self._closed
@@ -219,6 +224,8 @@ class Shape(object):
         return post_i
 
     def containsPoint(self, point):
+        if(len(self.points) == 0):
+            return False
         return self.makePath().contains(point)
 
     def getCircleRectFromLine(self, line):
