@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import functools
-import math
 import os
 import os.path as osp
 import re
@@ -405,7 +404,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         removePoint = action(
             text="Remove Selected Point",
-            slot=self.canvas.removeSelectedPoint,
+            slot=self.removeSelectedPoint,
             icon="edit",
             tip="Remove selected point from polygon",
             enabled=False,
@@ -1144,7 +1143,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def remLabels(self, shapes):
         for shape in shapes:
             item = self.labelList.findItemByShape(shape)
-            self.labelList.removeItem(item)
+            if(item is not None):
+                self.labelList.removeItem(item)
 
     def loadShapes(self, shapes, replace=True):
         self._noSelectionSlot = True
@@ -1181,7 +1181,8 @@ class MainWindow(QtWidgets.QMainWindow):
             shape.flags.update(flags)
             shape.other_data = other_data
 
-            s.append(shape)
+            if(not shape.haveNoPoints()):
+                s.append(shape)
         self.loadShapes(s)
 
     def loadFlags(self, flags):
@@ -1332,12 +1333,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoom_values[self.filename] = (self.zoomMode, value)
 
     def addZoom(self, increment=1.1):
-        zoom_value = self.zoomWidget.value() * increment
-        if increment > 1:
-            zoom_value = math.ceil(zoom_value)
-        else:
-            zoom_value = math.floor(zoom_value)
-        self.setZoom(zoom_value)
+        self.setZoom(self.zoomWidget.value() * increment)
 
     def zoomRequest(self, delta, pos):
         canvas_width_old = self.canvas.width()
@@ -1859,6 +1855,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleKeepPrevMode(self):
         self._config["keep_prev"] = not self._config["keep_prev"]
+
+    def removeSelectedPoint(self):
+        shape = self.canvas.removeSelectedPoint()
+        if(shape.haveNoPoints()):
+            self.canvas.deleteShape(shape)
+            self.remLabels([shape])
+            self.setDirty()
+            if self.noShapes():
+                for action in self.actions.onShapesPresent:
+                    action.setEnabled(False)
 
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
