@@ -29,6 +29,8 @@
 
 ## Description
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/71d4d2f832684f738077db14bb7f1c0e)](https://app.codacy.com/manual/gustavosandesilva/labelme?utm_source=github.com&utm_medium=referral&utm_content=Gustavosande/labelme&utm_campaign=Badge_Grade_Dashboard)
+
 Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
 It is written in Python and uses Qt for its graphical interface.
 
